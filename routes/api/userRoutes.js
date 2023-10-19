@@ -14,7 +14,9 @@ try{
 router.get('/:id', async (req, res) => {
     try{
         const user = await User.findOne({_id: req.params.id})
-        .populate({path: 'thoughts', select: '__v'});
+        // .populate({path: 'thoughts', select: '__v'});
+        .populate('thoughts')
+        .populate('friends')
 
         if (!user){ 
             return res.status(404).json({message: "No user with that ID"})
@@ -28,4 +30,42 @@ router.get('/:id', async (req, res) => {
         console.error(err)
     }
 })
+router.post('/create', async (req, res) => {
+    try{
+    const user = await User.create(req.body)
+    res.json(user)
+    }catch (err) {
+        res.status(500).json(err)
+        console.error(err)
+    }
+})
+router.put('/:id', async (req, res) => {
+    try{
+        const user = await User.findOneAndUpdate(
+            {_id: req.params.id},
+            {
+                username: req.body.username,
+                email: req.body.email,
+            },
+            {new:true}, 
+        )
+        res.json(user)
+    }catch (err) {
+        res.status(500).json(err)
+        console.error(err)
+    }
+});
+
+router.delete('/:id', async (req, res) => {
+    try {
+        const id = req.params.id
+        const user = User.findByIdAndDelete(id)
+    console.log(user)
+    res.status(200).json({ message: 'User deleted successfully' });
+}catch (err) {
+    res.status(500).json(err)
+    console.error(err)
+}
+})
+
 module.exports = router
