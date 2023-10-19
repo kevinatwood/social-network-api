@@ -17,6 +17,10 @@ const thoughtSchema = new Schema(
                 return dayJS(date).format('MM/DD/YYYY')
             }
         },
+        username: {
+            type: String,
+            required: true
+        },
         reactions: [reactionSchema],
     },
     {
