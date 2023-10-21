@@ -70,13 +70,45 @@ router.delete('/:id', async (req, res) => {
 
 router.post('/:userId/friends/:friendId', async (req, res) => {
     try {const user = await User.findOne({_id: req.params.userId})
-    user.friends.push(req.params.friendId)
-    user.save()
-    res.status(200).json(user)
-    console.log(user)
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+      
+      user.friends = user.friends || [];
+
+      if (user.friends.includes(req.params.friendId)){
+        return res.status(400).json({message: "You are already friends!"})
+      } else{
+         user.friends.push(req.params.friendId);
+    await user.save()
+    res.status(200).json(user)}
 } catch(err){
     res.status(500).json(err)
     console.error(err)
-}})
+}});
+
+router.delete('/:userId/friends/:friendId', async (req, res) => {
+    try {const user = await User.findOne({_id: req.params.userId})
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+      
+      const userFriends = user.friends || [];
+      console.log(userFriends)
+
+      if (userFriends.includes(req.params.friendId))
+    {  userFriends.forEach((el, index) => {
+        if (el == req.params.friendId){
+            userFriends.splice(index, 1)
+        }
+      });} else {
+        return res.status(400).json({message: "Invalid request, user is not in friends list"})
+      }
+    await user.save()
+    res.status(200).json(user)
+} catch(err){
+    res.status(500).json(err)
+    console.error(err)
+}});
 
 module.exports = router
