@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const { User } = require('../../models');
+const { findOne } = require('../../models/User');
 
 router.get("/", async (req, res) => {
 try{
@@ -65,6 +66,17 @@ router.delete('/:id', async (req, res) => {
     res.status(500).json(err)
     console.error(err)
 }
-})
+});
+
+router.post('/:userId/friends/:friendId', async (req, res) => {
+    try {const user = await User.findOne({_id: req.params.userId})
+    user.friends.push(req.params.friendId)
+    user.save()
+    res.status(200).json(user)
+    console.log(user)
+} catch(err){
+    res.status(500).json(err)
+    console.error(err)
+}})
 
 module.exports = router
