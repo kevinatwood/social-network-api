@@ -101,26 +101,20 @@ router.post('/:thoughtId/reactions', async (req, res) => {
 }
 });
 
-router.delete('/:thoughtId/reactions', async (req, res) => {
+router.delete('/:thoughtId/reactions/:reactionId', async (req, res) => {
     try{
-        const thought = await Thought.findOne({_id: req.params.thoughtId})
+        const thought = await Thought.findOneAndUpdate(
+            {_id: req.params.thoughtId},
+            {$pull: {reactions: {reactionId: req.params.reactionId}}},
+            {runValidators: true, new: true}
+            );
+
     if (!thought) {
         return res.status(404).json({ error: 'Thought not found' });
       }
       
-      const thoughtReactions = thought.reactions || [];
-      const reactions = thoughtReactions.map(i => i.reactionId);
-      console.log(reactions[2], req.body.reactionId, `new ObjectId("${req.body.reactionId}")`, reactions[2] == `new ObjectId("${req.body.reactionId}")`)
+     
 
-      if (reactions.includes(req.body.reactionId)){ 
-        
-        thoughtReactions.forEach((el, index) => {
-        if (el.reactionId == req.body.reactionId){
-            thoughtReactions.splice(index, 1)
-        }
-      });
-    }
-    // await Thought.save()
     res.status(200).json(thought)
     }catch(err){
         res.status(500).json(err)
