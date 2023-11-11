@@ -19,7 +19,7 @@ NPM Install, Node index.js
 
 ## Usage
 
-Walkthrough Video
+[Walkthrough Video](./assets/Social%20Network%20Walkthrough.mp4)
 
 
 ## Questions
