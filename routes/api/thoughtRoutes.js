@@ -61,7 +61,7 @@ router.put('/:id', async (req, res) => {
 });
 router.delete('/:id', async (req, res) => {
     try {
-        await Thought.findByIdAndDelete(req.params.id)
+
         const user = await User.findOne({username: req.body.username})
         const userThoughts = user.thoughts
         if (userThoughts.includes(req.params.id))
@@ -73,6 +73,7 @@ router.delete('/:id', async (req, res) => {
           });} else {
             return res.status(400).json({message: "Invalid request, not a valid thought"})
           }
+          await Thought.findByIdAndDelete(req.params.id)
     res.status(200).json(user);
 }catch (err) {
     res.status(500).json(err)
